@@ -8,26 +8,25 @@ def ForQueryInAddr(query, addr):
 	print("Searcing in: "+addr)
 	html = requests.get(addr,proxies=proxies).text
 	if (query.lower() in html.lower()):
+		print("==============================================")
 		print("Query found in: "+addr)
-	data = PyQuery(html)
-	links = data('a')
-	for link in links:
-		ahref = link.attrib['href']
-		#print("Found: "+ahref)
-		if(ahref[0].lower() == "/"):
-			ahref = addr+ahref
-		elif(ahref[0].lower() == "?"):
-			ahref = addr+"/"+ahref
-		if (ahref not in listed):
-			if (ahref[0].lower() == "h"):
-				if (primalsource in ahref):
-					if (ahref[-4:].lower() not in filetypes):
-						listed.append(ahref)
-						ForQueryInAddr(query, ahref)
+		print("==============================================")
+	if ("<html>" in html or "<head>" in html):
+		data = PyQuery(html)
+		links = data('a')
+		for link in links:
+			ahref = link.attrib['href']
+			#print("Found: "+ahref)
+			if (ahref not in listed):
+				if (ahref[0].lower() == "h"):
+					if (primalsource in ahref):
+						if (ahref[-3:].lower() not in filetypes and ahref[-4:].lower() not in filetypes and ahref[-5:].lower() not in filetypes):
+							listed.append(ahref)
+							ForQueryInAddr(query, ahref)
 
 def Start():
 	global proxies, listed, sources, filetypes, primalsource
-	filetypes = [".png",".jpg",".gif",".zip",".rar"]
+	filetypes = [".xz",".gz",".7z",".png",".jpg",".gif",".zip",".rar",".mp4",".m4v",".mkv",".mov",".3gp",".avi",".mpeg",".jpeg",".pdf"]
 	primalsource = input("Primal Source: ")
 	query = input("Query: ")
 	sources = []
